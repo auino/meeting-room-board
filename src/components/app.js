@@ -2,13 +2,34 @@ import React, { Component } from "react";
 import moment from "moment";
 import welcomeImage from "../images/welcome.svg";
 import spinner from "../images/spinner.svg";
-import { GOOGLE_API_KEY, CALENDAR_ID } from "../config.js";
+import langs from "../langs.js"
+
+var GOOGLE_API_KEY = null;
+var CALENDAR_ID = null;
+var CALENDAR_ID_NEW_EVENT = null;
+var SHOW_NEW_EVENT = false;
+var TIME_FORMAT = "dd, Do MMMM, h:mm A, YYYY";
+
+var lang = langs.langs.en;
 
 export default class App extends Component {
   constructor(props) {
     super(props);
+    // getting configuration from url: begin
+    var url = require('url');
+    var url_parts = url.parse(window.location.href, true).query;
+    if(url_parts.googleapikey != null) GOOGLE_API_KEY = url_parts.googleapikey;
+    if(url_parts.calendarid != null) CALENDAR_ID = url_parts.calendarid;
+    if(url_parts.calendaridnewevent != null) CALENDAR_ID_NEW_EVENT = url_parts.calendaridnewevent;
+    if(url_parts.shownewevent != null) SHOW_NEW_EVENT = true;
+    if(url_parts.timeformat != null) TIME_FORMAT = url_parts.timeformat;
+    if(url_parts.lang != null) {
+      if(url_parts.lang == 'en') lang = langs.langs.en;
+      if(url_parts.lang == 'it') lang = langs.langs.it;
+    }
+    // getting configuration from url: end
     this.state = {
-      time: moment().format("dd, Do MMMM, h:mm A"),
+      time: moment().format(TIME_FORMAT),
       events: [],
       isBusy: false,
       isEmpty: false,
@@ -77,7 +98,7 @@ export default class App extends Component {
   }
 
   tick = () => {
-    let time = moment().format("dddd, Do MMMM, h:mm A");
+    let time = moment().format(TIME_FORMAT);
     this.setState({
       time: time
     });
@@ -142,7 +163,7 @@ export default class App extends Component {
 
     let loadingState = (
       <div className="loading">
-        <img src={spinner} alt="Loading..." />
+        <img src={spinner} alt="{lang.loading}" />
       </div>
     );
 
@@ -153,23 +174,23 @@ export default class App extends Component {
             this.state.isBusy ? "current-status busy" : "current-status open"
           }
         >
-          <h1>{this.state.isBusy ? "BUSY" : "OPEN"}</h1>
+          <h1>{this.state.isBusy ? lang.busy : lang.free}</h1>
         </div>
         <div className="upcoming-meetings">
-          <div className="current-time">{time}, 2018</div>
-          <h1>Upcoming Meetings</h1>
+          <div className="current-time">{time}</div>
+          <h1>{lang.upcomingmeetings}</h1>
           <div className="list-group">
             {this.state.isLoading && loadingState}
             {events.length > 0 && eventsList}
             {this.state.isEmpty && emptyState}
           </div>
-          <a
+          { SHOW_NEW_EVENT ? <a
             className="primary-cta"
-            href="https://calendar.google.com/calendar?cid=c3FtMnVkaTFhZGY2ZHM3Z2o5aDgxdHVldDhAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ"
+            href="https://calendar.google.com/calendar?cid=${CALENDAR_ID_NEW_EVENT}"
             target="_blank"
           >
             +
-          </a>
+          </a> : ''}
         </div>
       </div>
     );
