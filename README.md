@@ -1,4 +1,4 @@
-# React Meeting Room
+# meeting-room-board
 
 A simple web app to show meeting room status and reservations.
 
