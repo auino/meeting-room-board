@@ -1,4 +1,4 @@
-# React Meeting Room
+# Meeting Room Board
 
 A simple web app to book meeting room inside an office.
 
