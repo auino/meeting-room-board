@@ -2,3 +2,4 @@
 *.css.map
 .vscode/
 node_modules/
+internal_notes.txt

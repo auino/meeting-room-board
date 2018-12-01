@@ -155,8 +155,8 @@ export default class App extends Component {
       <div className="empty">
         <img src={welcomeImage} alt="Welcome" />
         <h3>
-          No meetings are scheduled for the day. Create one by clicking the
-          button below.
+          { lang.nomeetings }
+          { SHOW_NEW_EVENT ? lang.createnewmeeting : '' }
         </h3>
       </div>
     );
